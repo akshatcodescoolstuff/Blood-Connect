@@ -7,6 +7,13 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
     die("Access denied. Admin login required.");
 }
 
+// Check if status column exists
+$checkColumn = $conn->query("SHOW COLUMNS FROM contact_messages LIKE 'status'");
+if ($checkColumn->num_rows == 0) {
+    // Add status column if missing
+    $conn->query("ALTER TABLE contact_messages ADD COLUMN status ENUM('unread', 'read', 'replied') DEFAULT 'unread'");
+}
+
 $sql = "SELECT * FROM contact_messages ORDER BY created_at DESC";
 $result = $conn->query($sql);
 ?>
@@ -44,7 +51,7 @@ $result = $conn->query($sql);
         </thead>
         <tbody>
             <?php while($row = $result->fetch_assoc()): ?>
-            <tr class="<?php echo $row['status'] == 'unread' ? 'unread' : 'read'; ?>">
+            <tr class="<?php echo isset($row['status']) && $row['status'] == 'unread' ? 'unread' : 'read'; ?>">
                 <td><?php echo $row['id']; ?></td>
                 <td><?php echo htmlspecialchars($row['name']); ?></td>
                 <td><?php echo htmlspecialchars($row['email']); ?></td>
@@ -53,7 +60,7 @@ $result = $conn->query($sql);
                 <td class="message-preview" title="<?php echo htmlspecialchars($row['message']); ?>">
                     <?php echo htmlspecialchars(substr($row['message'], 0, 50)) . '...'; ?>
                 </td>
-                <td><?php echo $row['status']; ?></td>
+                <td><?php echo isset($row['status']) ? $row['status'] : 'unread'; ?></td>
                 <td><?php echo $row['created_at']; ?></td>
                 <td>
                     <a href="view_message.php?id=<?php echo $row['id']; ?>">View</a>
