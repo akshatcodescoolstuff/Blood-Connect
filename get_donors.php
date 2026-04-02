@@ -3,7 +3,7 @@ include 'config.php';
 
 header('Content-Type: application/json');
 
-$sql = "SELECT id, name, blood_group, city, phone, available FROM donors";
+$sql = "SELECT id, name, blood_group, city, phone, available FROM donors WHERE available = 1";
 $result = $conn->query($sql);
 
 $data = [];
