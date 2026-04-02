@@ -43,8 +43,8 @@ $conn->begin_transaction();
 try {
     // Insert into donors table
     $sql = "INSERT INTO donors (name, blood_group, city, phone, email, address, age, state, pin_code, last_donation_date, available) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
-    
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)";
+        
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssssssssss", 
         $name, $blood_group, $district, $phone, $email, $address, $age, $state, $pin_code, $last_donation_date
